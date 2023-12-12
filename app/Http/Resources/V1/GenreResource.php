@@ -2,11 +2,9 @@
 
 namespace App\Http\Resources\V1;
 
-use App\Http\Controllers\Api\V1\GenreController;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\V1\GenreResource;
 
-class MovieResource extends JsonResource
+class GenreResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,8 +17,6 @@ class MovieResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'releaseDate' => $this->release_date,
-            'genre' => (new GenreResource($this->whenLoaded('genre')))->title,
         ];
     }
 }

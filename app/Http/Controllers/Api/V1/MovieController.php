@@ -8,16 +8,25 @@ use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MovieResource;
 use App\Http\Resources\V1\MovieCollection;
+use App\Filters\V1\MovieFilter;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new MovieCollection(Movie::paginate());
+        $filter = new MovieFilter();
+        $queryItems = $filter->transform($request);
+
+        $movies = Movie::where($queryItems);
+
+        $filter->applyGenreFilter($movies, $request);
+        $movies->with('genre');
+
+        return new MovieCollection($movies->paginate()->appends($request->query()));
     }
 
     /**
@@ -49,7 +58,7 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        return new MovieResource($movie);
+        return new MovieResource($movie->loadMissing('genres'));
     }
 
     /**

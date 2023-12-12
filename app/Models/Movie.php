@@ -12,7 +12,7 @@ class Movie extends Model
     public function users() {
         return $this->belongsToMany(User::class);
     }
-    public function genders() {
-        return $this->belongsTo(Genre::class);
+    public function genre() {
+        return $this->belongsTo(Genre::class, 'id_genre');
     }
 }
