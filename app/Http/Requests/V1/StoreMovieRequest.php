@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class StoreMovieRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,17 @@ class StoreMovieRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => ['required'],
+            'idGenre' => ['required'],
+            'releaseDate' => ['required']
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'id_genre' => $this->idGenre,
+            'release_date' => $this->releaseDate
+        ]);
     }
 }

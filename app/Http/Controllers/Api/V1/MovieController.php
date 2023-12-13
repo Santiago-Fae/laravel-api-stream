@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Movie;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MovieResource;
 use App\Http\Resources\V1\MovieCollection;
+use App\Http\Requests\V1\StoreMovieRequest;
+use App\Http\Requests\V1\UpdateMovieRequest;
 use App\Filters\V1\MovieFilter;
 use Illuminate\Http\Request;
 
@@ -42,12 +42,12 @@ class MovieController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreMovieRequest  $request
+     * @param  \App\Http\Requests\V1\StoreMovieRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreMovieRequest $request)
     {
-        //
+        return new MovieResource((Movie::create($request->all()))->loadMissing('genre'));
     }
 
     /**
@@ -81,7 +81,8 @@ class MovieController extends Controller
      */
     public function update(UpdateMovieRequest $request, Movie $movie)
     {
-        //
+        $movie->update($request->all());
+        return new MovieResource($movie->loadMissing('genre'));
     }
 
     /**
