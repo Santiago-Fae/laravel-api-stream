@@ -26,7 +26,7 @@ class StoreRatingRequest extends FormRequest
         return [
             'idMovie' => ['required'],
             'idUser' => ['required'],
-            'rating' => ['required']
+            'rating' => ['required', 'numeric', 'between:1,5']
         ];
     }
 

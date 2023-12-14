@@ -60,7 +60,7 @@ class RatingController extends Controller
                                 ->first();
         // Rating already exists
         if ($existingRating) {
-            return response()->json(['error' => 'Rating already exists'], 409);
+            return response()->json(['error' => 'This user has already given a review to this film'], 409);
         }
 
         return new RatingResource(Rating::create($request->all()));
