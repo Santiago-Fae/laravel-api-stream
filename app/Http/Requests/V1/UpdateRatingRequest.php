@@ -4,7 +4,7 @@ namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMovieRequest extends FormRequest
+class UpdateRatingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,35 +23,22 @@ class UpdateMovieRequest extends FormRequest
      */
     public function rules()
     {
-        $method = $this->method();
-
-        if ($method === 'PUT') {
-            return [
-                'title' => ['required'],
-                'idGenre' => ['required'],
-                'releaseDate' => ['required']
-            ];
-        }
-        //is PATCH
         return [
-            'title' => ['sometimes', 'required'],
-            'idGenre' => ['sometimes', 'required'],
-            'releaseDate' => ['sometimes', 'required']
+            'rating' => ['required']
         ];
- 
     }
 
     protected function prepareForValidation()
     {
         //TODO: check if this is the best way to do this
-        if ($this->id_genre) {
+        if ($this->id_movie) {
             $this->merge([
-                'id_genre' => $this->idGenre
+                'id_movie' => $this->idMovie,
             ]);
         }
-        if ($this->release_date) {
+        if ($this->id_user) {
             $this->merge([
-                'release_date' => $this->releaseDate
+                'id_user' => $this->idUser
             ]);
         }
     }

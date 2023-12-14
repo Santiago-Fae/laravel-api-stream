@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\V1\StoreUserRequest;
+use App\Http\Requests\V1\UpdateUserRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Http\Resources\V1\UserCollection;
 
@@ -39,7 +39,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        return new UserResource((User::create($request->all())));
     }
 
     /**
@@ -73,7 +73,8 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $User)
     {
-        //
+        $User->update($request->all());
+        return new UserResource($User);
     }
 
     /**
@@ -81,9 +82,20 @@ class UserController extends Controller
      *
      * @param  \App\Models\User  $User
      * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $User)
+     */    
+    public function destroy($userId)
     {
-        //
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        try {
+            $user->delete();
+        } 
+        catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to delete the user'], 500);
+        }
+        return response()->noContent();
     }
 }

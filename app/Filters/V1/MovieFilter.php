@@ -3,6 +3,7 @@ namespace App\Filters\V1;
 
 use Illuminate\Http\Request;
 use App\Filters\ApiFilter;
+use App\Models\Rating;
 
 class MovieFilter extends ApiFilter {
     protected $safePares = [
@@ -23,10 +24,10 @@ class MovieFilter extends ApiFilter {
 
     public function applyGenreFilter($movies, $request)
     {
-        if ($request->has('genre') && $request->input('genre') !== null) {
+        if ($request->has('genre') && is_array($request->input('genre')) && $request->input('genre')['eq'] !== null) {
             $movies->whereHas('genre', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->input('genre') . '%');            });
+                $query->where('title', 'LIKE', '%' . $request->input('genre')['eq'] . '%');
+            });
         }
-
     }
 }

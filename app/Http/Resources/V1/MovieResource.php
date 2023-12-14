@@ -16,11 +16,19 @@ class MovieResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $resourceArray = [
             'id' => $this->id,
             'title' => $this->title,
-            'releaseDate' => $this->release_date,
-            'genre' => (new GenreResource($this->whenLoaded('genre')))->title,
+            'releaseDate' => $this->release_date
         ];
+
+        if ($this->resource->mediaRating) {
+            $resourceArray['mediaRating'] = $this->mediaRating;
+        }
+        if ($this->resource->genre) {
+            $resourceArray['genre'] = (new GenreResource($this->whenLoaded('genre')))->title;
+        }
+
+        return $resourceArray;
     }
 }

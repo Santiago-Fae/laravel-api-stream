@@ -2,9 +2,12 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Http\Controllers\Api\V1\GenreController;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\V1\UserResource;
+use App\Http\Resources\V1\MovieResource;
 
-class UserResource extends JsonResource
+class RatingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,7 +19,9 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name
+            'rating' => $this->rating,
+            'movie' => new MovieResource($this->whenLoaded('movie')),
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

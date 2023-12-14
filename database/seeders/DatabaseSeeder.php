@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 use App\Models\Genre;
 use App\Models\Movie;
+use App\Models\Rating;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,8 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
         $this->call(GenreSeeder::class);
         $this->call(MovieSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(RatingSeeder::class);
     }
 }

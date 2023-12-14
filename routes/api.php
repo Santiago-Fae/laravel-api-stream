@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // api/v1
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1'], function () {
+    Route::apiResource('genres', 'GenreController');
     Route::apiResource('movies', 'MovieController');
-    Route::apiResource('genres', GenreController::class);
+    Route::apiResource('users', 'UserController');
+    Route::apiResource('ratings', 'RatingController');
 });

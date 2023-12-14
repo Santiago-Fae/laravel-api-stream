@@ -10,11 +10,13 @@ use App\Http\Requests\V1\StoreMovieRequest;
 use App\Http\Requests\V1\UpdateMovieRequest;
 use App\Filters\V1\MovieFilter;
 use Illuminate\Http\Request;
+use App\Models\Rating;
 
 class MovieController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
      */
     public function index(Request $request)
     {
@@ -22,10 +24,16 @@ class MovieController extends Controller
         $queryItems = $filter->transform($request);
 
         $movies = Movie::where($queryItems);
-
+        
         $filter->applyGenreFilter($movies, $request);
         $movies->with('genre');
 
+        if ($request->has('mediaRating')) {
+            $movies->addSelect([
+                'mediaRating' => Rating::selectRaw('ROUND(COALESCE(AVG(rating), 0), 2)')
+                    ->whereColumn('id_movie', 'movies.id')
+            ]);
+        }
         return new MovieCollection($movies->paginate()->appends($request->query()));
     }
 
@@ -47,6 +55,12 @@ class MovieController extends Controller
      */
     public function store(StoreMovieRequest $request)
     {
+        $existingMovieTitle = Movie::where('title', $request->title)->first();
+        // Movie Title already exists
+        if ($existingMovieTitle) {
+            return response()->json(['error' => 'Title already exists'], 409);
+        }
+
         return new MovieResource((Movie::create($request->all()))->loadMissing('genre'));
     }
 
@@ -91,8 +105,19 @@ class MovieController extends Controller
      * @param  \App\Models\Movie  $movie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Movie $movie)
+    public function destroy($movieId)
     {
-        //
+        $movie = Movie::find($movieId);
+
+        if (!$movie) {
+            return response()->json(['error' => 'Movie not found'], 404);
+        }
+        try {
+            $movie->delete();
+        } 
+        catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to delete the movie'], 500);
+        }
+        return response()->noContent();
     }
 }
